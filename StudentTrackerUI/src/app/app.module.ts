@@ -21,7 +21,6 @@ import { DashboardsecondComponent } from './dashboardsecond/dashboardsecond.comp
 import { MonthsummaryComponent } from './monthsummary/monthsummary.component';
 import { BulkhoursComponent } from './bulkhours/bulkhours.component';
 
-import { GraphQLModule } from './graphql.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { authReducer } from './state/auth.reducer';
@@ -54,7 +53,6 @@ import { TotalhourspageComponent } from './totalhourspage/totalhourspage.compone
     HttpClientModule,
     StoreModule.forRoot({ auth: authReducer }),
     EffectsModule.forRoot([AuthEffects]),
-    GraphQLModule,
     NgxChartsModule
   ],
   providers: [],
