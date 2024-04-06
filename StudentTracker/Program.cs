@@ -23,7 +23,6 @@ builder.Services.AddScoped<IHoursTrackerService, HoursTrackerService>();
 builder.Services.AddScoped<ISupervisedHoursTrackerService, SupervisedHoursTrackerService>();
 builder.Services.AddScoped<IIndependentHoursTrackerService, IndependentHoursTrackerService>();
 
-// builder.Services.AddGraphQLServer().AddQueryType<Query>().AddType<UserType>();
 builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
@@ -37,8 +36,6 @@ builder.Services.AddCors(options =>
         });
 
 var app = builder.Build();
-
-// app.MapGraphQL();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
