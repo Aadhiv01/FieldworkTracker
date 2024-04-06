@@ -1,0 +1,86 @@
+<div>
+  <h4 class="text-blue-600 font-bold">Hour Entry</h4>
+  <form (ngSubmit)="saveHours(hoursform)" #hoursform="ngForm">
+    <div class="flex gap-24 pb-1 text-base">
+      <label for="date" class="pr-14">Date<span class="required text-red-700 text-sm align-super">*</span></label>
+      <label for="start" class="pr-24">Start Time<span class="required text-red-700 text-sm align-super">*</span></label>
+      <label for="end">End Time<span class="required text-red-700 text-sm align-super">*</span></label>
+    </div>
+    <div class="flex gap-14 pb-2">
+      <input type="date" name="date" class="grayborder p-2" [(ngModel)]="date">
+      <div>
+        <input #startHourInput type="number" name="start" class="w-16 grayborder p-2" [(ngModel)]="start_time_h" (ngModelChange)="calculateTimeDifference()" min="1" max="12" placeholder="HH" (input)="onInput(startHourInput, startMinuteInput)">&nbsp;:&nbsp;
+        <input #startMinuteInput type="number" name="start" class="w-16 grayborder p-2" [(ngModel)]="start_time_m" (ngModelChange)="calculateTimeDifference()" min="0" max="59" placeholder="MM" (input)="onInput(startMinuteInput, startAmPmInput)">&nbsp;&nbsp;
+        <select #startAmPmInput name="start" [(ngModel)]="start_time_ampm" class="w-16 grayborder p-2">
+          <option class="border-gray-500" *ngFor="let value of ampm" (ngModelChange)="calculateTimeDifference()">{{ value }}</option>
+        </select>
+      </div>
+      <div>
+        <input #endHourInput type="number" class="w-16 grayborder p-2" name="end" [(ngModel)]="end_time_h" (ngModelChange)="calculateTimeDifference()" min="1" max="12" placeholder="HH" (input)="onInput(endHourInput, endMinuteInput)">&nbsp;:&nbsp;
+        <input #endMinuteInput type="number" class="w-16 grayborder p-2" name="end" [(ngModel)]="end_time_m" (ngModelChange)="calculateTimeDifference()" min="0" max="59" placeholder="MM" (input)="onInput(endMinuteInput, endAmPmInput)">&nbsp;&nbsp;
+        <select #endAmPmInput name="end" [(ngModel)]="end_time_ampm" (ngModelChange)="calculateTimeDifference()" class="w-16 grayborder p-2">
+          <option *ngFor="let value of ampm">{{ value }}</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <h4 class="text-blue-600 font-bold pb-2">Hour Type</h4>
+    <div class="flex gap-12 pb-8">
+      <button type="button" class="font-bold text-base" [ngClass]="isIndependent ? 'button-active' : 'button-inactive'" (click)="buttontoggle('Independent')">Independent<br>BCBA <i class="font-extrabold">not</i> Present</button>
+      <button type="button" class="font-bold text-base" [ngClass]="isSupervised ? 'button-active' : 'button-inactive'" (click)="buttontoggle('Supervised')">Supervised<br>BCBA <i class="font-extrabold">is</i> Present</button>
+      <div class="bg-blue-50 shadow-md p-4 w-56 h-32 text-center text-base">
+        Hour(s) for Allotment<br><br><span *ngIf="timeDifference >= 0" class="text-red-600">{{ timeDifference }}</span><span *ngIf="timeDifference < 0" class="text-red-600">Incorrect Time</span>
+      </div>
+    </div>
+    <br>
+    <div *ngIf="isIndependent">
+      <h6 class="text-blue-600 font-bold pb-2">Independent Hours</h6>
+      <div class="flex gap-52 pb-2 text-base">
+          <label for="restricted">Restricted</label>
+          <label for="unrestricted">Unrestricted</label>
+        </div>
+        <div class="flex gap-6 pb-2">
+          <input type="number" name="restricted" [(ngModel)]="restrictedHours" inputmode="numeric" class="w-64 grayborder p-2">
+          <input type="number" name="unrestricted" [(ngModel)]="unrestrictedHours" inputmode="numeric" class="w-64 grayborder p-2">
+        </div>
+        <br>
+        <label for="description" class="text-base pb-2">Description of Activity</label><br>
+        <textarea name="description" class="w-96 grayborder p-2 resize resize-handle" [(ngModel)]="description"></textarea>
+        <br><br>
+        <button *ngIf="isSaveButtonEnabled('independent')" class="bg-blue-600 text-white font-bold w-28 h-12 p-2 text-lg hover:bg-blue-400">SAVE</button>
+        <h6 *ngIf="!isSaveButtonEnabled('independent')" class="text-blue-600 font-bold pb-2">Satisfy Time Requirements to Save</h6>
+    </div>
+    <div *ngIf="isSupervised">
+      <h6 class="text-blue-600 font-bold pb-2">Supervised Hours</h6>
+      <div class="flex gap-32 pb-2 text-base">
+        <label for="restricted" class="pr-4">Individual Restricted</label>
+        <label for="unrestricted">Individual Unrestricted</label>
+        <label for="g-unrestricted">Group Unrestricted</label>
+      </div>
+      <div class="flex gap-6 pb-2 w-3/5">
+        <input type="number" name="restricted" [(ngModel)]="individualRestricted" inputmode="numeric" class="w-1/3 grayborder p-2">
+        <input type="number" name="unrestricted" [(ngModel)]="individualUnrestricted" inputmode="numeric" class="w-1/3 grayborder p-2">
+        <input type="number" name="g-unrestricted" [(ngModel)]="groupUnrestricted" inputmode="numeric" class="w-1/3 grayborder p-2">
+      </div>
+      <br>
+      <label for="contact-type" class="text-base">Contact Type<span class="required text-red-700 text-sm align-super">*</span></label>
+      <div class="flex gap-14 pt-2 pb-4 text-base">
+        <button type="button" class="font-bold text-base" [ngClass]="contact_type === 'Non-Observational' ? 'button-active' : 'button-inactive'" (click)="contact_type='Non-Observational'">Non-Observational Contact</button>
+        <button type="button" class="font-bold text-base" [ngClass]="contact_type === 'Observation' ? 'button-active' : 'button-inactive'" (click)="contact_type='Observation'">Observation with Client Contact</button>
+      </div>
+      <br>
+      <label for="format" class="text-base">Format Type<span class="required text-red-700 text-sm align-super">*</span></label>
+      <div class="flex gap-8 pt-2 pb-4 text-base">
+        <button type="button" class="font-bold text-base" [ngClass]="format_type === 'in-person' ? 'button-active' : 'button-inactive'" (click)="format_type='in-person'">In-Person</button>
+        <button type="button" class="font-bold text-base" [ngClass]="format_type === 'online' ? 'button-active' : 'button-inactive'" (click)="format_type='online'">Online</button>
+        <button type="button" class="font-bold text-base" [ngClass]="format_type === 'phone-call' ? 'button-active' : 'button-inactive'" (click)="format_type='phone-call'">Phone Call</button>
+      </div>
+      <br>
+      <label for="description" class="text-base pb-2">Description of Activity</label><br>
+      <textarea name="description" class="w-96 grayborder p-2 resize resize-handle" [(ngModel)]="description"></textarea>
+      <br><br>
+      <button *ngIf="isSaveButtonEnabled('supervised')" class="bg-blue-600 text-white font-bold w-28 h-12 p-2 text-lg hover:bg-blue-400">SAVE</button>
+      <h6 *ngIf="!isSaveButtonEnabled('supervised')" class="text-blue-600 font-bold pb-2">Satisfy Time Requirements to Save</h6>
+    </div>
+  </form>
+</div>

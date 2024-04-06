@@ -1,0 +1,21 @@
+li {
+    display: block;
+    text-decoration: none;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem 1rem;
+    background-color: rgb(20, 104, 238);
+    color: #fff;
+    font-weight: 600;
+    font-size: larger;
+    border-radius: 0.25rem;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s, opacity 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #51a2ee;
+        color: #fff;
+        box-shadow: 0 0 5px rgb(20, 104, 238);
+    }
+}

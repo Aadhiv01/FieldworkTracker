@@ -1,0 +1,218 @@
+<div class="">
+    <nav class="bg-blue-600 text-white flex p-2 items-center">
+        <h5 class="font-bold flex-grow pl-2" *ngIf="userType$ === 'Supervisee' && type === 'organization'">MY PROFILE - ORGANIZATIONS</h5>
+        <h5 class="font-bold flex-grow pl-2" *ngIf="userType$ === 'Supervisee' && type === 'supervisor'">MY PROFILE - SUPERVISORS</h5>
+        <h5 class="font-bold flex-grow pl-2" *ngIf="type === ''">MY PROFILE - USER INFORMATION</h5>
+        <p class="cursor-pointer text-lg pr-2" (click)="urlRedirect('/dashboard')">Back to Dashboard</p>
+    </nav>
+    </div>
+    <div class="grid grid-cols-2 w-full pl-10 pr-10">
+      <div class="pt-8 pl-2 w-3/5 text-base font-bold flex flex-col gap-6">
+            <button type="button" class="p-2"  (click)="urlRedirect('/my-profile')" [ngClass]="{
+                    'active-link': isActive('/my-profile'),
+                    'inactive-link': !isActive('/my-profile')
+                }"
+            >
+                USER INFORMATION
+            </button>
+            <button type="button" class="p-1" [ngClass]="{
+                    'active-link': isActive('/acc-settings'),
+                    'inactive-link': !isActive('/acc-settings')
+                }"
+            >
+                ACCOUNT SETTINGS
+            </button>
+            <button type="button" *ngIf="userType$ === 'Supervisee'" class="p-1" (click)="urlRedirect('/my-profile/supervisor')" [ngClass]="{
+                    'active-link': isActive('/my-profile/supervisor'),
+                    'inactive-link': !isActive('/my-profile/supervisor')
+                }"
+            >
+                SUPERVISORS
+            </button>
+            <button type="button" *ngIf="userType$ === 'Supervisee'" class="p-1" (click)="urlRedirect('/my-profile/organization')" [ngClass]="{
+                    'active-link': isActive('/my-profile/organization'),
+                    'inactive-link': !isActive('/my-profile/organization')
+                }"
+            >
+                ORGANIZATIONS
+            </button>
+            <button type="button" class="p-1" [ngClass]="{
+                    'active-link': isActive('/add-access'),
+                    'inactive-link': !isActive('/add-access')
+                }"
+            >
+                ACCOUNT ACCESS
+            </button>
+        </div>
+        <div *ngIf="userType$ === 'Supervisee' && type === 'supervisor'" class="pt-4 -mx-36">
+          <form *ngIf="addSupervisorToggle" (ngSubmit)="addSupervisor(supervisorform)" #supervisorform="ngForm">
+            <h4 class="text-blue-600 font-bold">ADD SUPERVISOR</h4>
+            <div class="flex gap-48 text-lg">
+                <label for="fname">Supervisor First Name<span class="required text-red-700 text-sm align-super">*</span></label>
+                <label for="lname">Supervisor Last Name<span class="required text-red-700 text-sm align-super">*</span></label>
+            </div>
+            <div class="flex gap-20 pt-2 pb-5">
+                <input type="text" id="fname" name="fname" class="inputborder" [(ngModel)]="supervisor_fname">
+                <input type="text" id="lname" name="lname"  class="inputborder" [(ngModel)]="supervisor_lname">
+            </div>
+            <div class="flex gap-60 text-lg">
+                <label for="email">Supervisor Email</label>
+                <label for="id">Supervisor BACB ID<span class="required text-red-700 text-sm align-super">*</span></label>
+            </div>
+            <div class="flex gap-20 pt-2 pb-5">
+                <input type="text" id="email" name="email" class="inputborder" [(ngModel)]="supervisor_email">
+                <input type="text" id="id" name="id" class="inputborder" [(ngModel)]="supervisor_bacbid">
+            </div>
+            <div class="text-lg">
+                <label for="qualification">Supervisor Qualification<span class="required text-red-700 text-sm align-super">*</span></label>
+            </div>
+            <div class="pt-2 pb-8">
+                <select id="supervisordropdown" name="qualification" [(ngModel)]="supervisor_qualification" class="supervisorDropdown w-1/3">
+                    <option *ngFor="let qualification of qualifications" [value]="qualification">{{ qualification }}</option>
+                </select>
+            </div>
+            <button name="add-button" class="bg-blue-600 text-white font-bold w-28 h-12 p-2 text-lg hover:bg-blue-400" (click)="addSupervisor">SAVE</button>
+          </form>
+          <br><br>
+          <div class="pb-4 w-4/5">
+            <h4 class="text-blue-600 font-bold">SUPERVISOR(S)</h4>
+            <p class="text-left text-base">Supervisor overseeing the particular activity/hours you are entering. This may be your Responsible Supervisor or another supervisor if you are accruing hours under multiple supervisors.
+              <br><br>
+              This is for hour tracking only. If you want a supervisor to access your account, add them in Account Access.
+            </p>
+            <br><br>
+            <div class="relative">
+              <button type="button" (click)="addSupervisorToggleClick()" class="bg-blue-600 text-white absolute right-0 font-bold w-2/5 h-12 p-2 text-lg hover:bg-blue-400">ADD NEW SUPERVISOR</button><br><br><br><br>
+            </div>
+            <table *ngIf="supervisors.length > 0" class="table-list">
+              <thead>
+                <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>BACB ID</th>
+                      <th>Qualification</th>
+                      <th></th>
+                      <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let supervisor of supervisors">
+                      <td>{{ supervisor.firstName + " " + supervisor.lastName }}</td>
+                      <td>{{ supervisor.email }}</td>
+                      <td>{{ supervisor.bacbid }}</td>
+                      <td>{{ supervisor.qualification }}</td>
+                      <td><i class="bi bi-pencil text-blue-600 text-2xl font-extrabold cursor-pointer" (click)="editSupervisor(supervisor)"></i></td>
+                      <td><i class="bi bi-trash text-blue-600 text-2xl font-extrabold cursor-pointer"></i></td>
+                </tr>
+              </tbody>
+            </table>
+            <br><br>
+            <p class="font-bold text-sm">*Supervisors can only be deleted once all hour entries have been reassigned to another supervisor.</p>
+          </div>
+        </div>
+        <div *ngIf="userType$ === 'Supervisee' && type === 'organization'" class="pt-4 -mx-36">
+            <form *ngIf="addOrganizationToggle" (ngSubmit)="addOrganization(organizationform)" #organizationform="ngForm">
+                <h4 class="text-blue-600 font-bold">ADD ORGANIZATION</h4>
+                <div class="text-lg">
+                    <label for="name">Organization Name<span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="pt-2 pb-5">
+                    <input type="text" name="name" id="name" class="inputborderorg" [(ngModel)]="organization_name">
+                </div>
+                <button class="bg-blue-600 text-white font-bold w-28 h-12 p-2 text-lg hover:bg-blue-400" (click)="addOrganization">SAVE</button>
+            </form>
+            <br><br><br>
+            <div *ngIf="supervisors.length > 0" class="pb-4 w-4/5">
+              <h4 class="text-blue-600 font-bold">ORGANIZATION(S)</h4>
+              <p class="text-left text-lg font-medium">Name of the organization at which you are accruing hours.</p>
+              <div class="relative">
+                <button type="button" (click)="addOrganizationToggleClick()" class="bg-blue-600 text-white absolute right-0 font-bold w-2/5 h-12 p-2 text-lg hover:bg-blue-400">ADD NEW ORGANIZATION</button><br><br><br><br>
+              </div>
+              <br>
+              <table class="table-list">
+                <thead>
+                  <tr>
+                        <th>Name</th>
+                        <th></th>
+                        <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let organization of organizations">
+                        <td>{{ organization.name }}</td>
+                        <td><i class="bi bi-pencil text-blue-600 text-2xl font-extrabold cursor-pointer" (click)="editOrganization(organization)"></i></td>
+                        <td><i class="bi bi-trash text-blue-600 text-2xl font-extrabold cursor-pointer"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+              <br><br>
+              <p class="font-bold text-sm">*Supervisors can only be deleted once all hour entries have been reassigned to another supervisor.</p>
+            </div>
+        </div>
+        <div *ngIf="type === ''" class="pt-4 -mx-36">
+            <form #userform="ngForm">
+                <h4 class="text-blue-600 font-bold">USER INFORMATION</h4>
+                <div class="flex gap-60 text-lg">
+                    <label for="fname">First Name<span class="required text-red-700 text-sm align-super pr-11">*</span></label>
+                    <label for="lname">Last Name<span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="fname" class="inputborder p-2" [value]="userdata.firstName" [(ngModel)]="userdata.firstName">
+                    <input type="text" id="lname" class="inputborder p-2" [value]="userdata.lastName" [(ngModel)]="userdata.lastName">
+                </div>
+                <div class="flex gap-72 text-lg">
+                    <label for="id" class="pr-6">BACB ID</label>
+                    <label for="phone">Phone <span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="id" class="inputborder p-2" [value]="userdata.bacbid" [(ngModel)]="userdata.bacbid">
+                    <input type="text" id="phone" class="inputborder p-2" [value]="userdata.phone" [(ngModel)]="userdata.phone">
+                </div>
+                <div class="text-lg">
+                    <label for="address">Address<span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="pt-2 pb-8 flex flex-wrap gap-6 whitespace-pre-line">
+                    <input type="text" class="inputborderorg p-2" [value]="userdata.address" [(ngModel)]="userdata.address">
+                    <input type="text" class="inputborderorg p-2">
+                </div>
+                <div class="flex gap-80 text-lg">
+                    <label for="city">City<span class="required text-red-700 text-sm align-super pr-5">*</span></label>
+                    <label for="state">State<span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="city" class="inputborder p-2" [value]="userdata.city" [(ngModel)]="userdata.city">
+                    <input type="text" id="state" class="inputborder p-2" [value]="userdata.state" [(ngModel)]="userdata.state">
+                </div>
+                <div class="flex gap-56 text-lg">
+                    <label for="zip">Zip / Postal Code <span class="required text-red-700 text-sm align-super pr-2">*</span></label>
+                    <label for="country">Country <span class="required text-red-700 text-sm align-super">*</span></label>
+                </div>
+                <div class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="zip" class="inputborder">
+                    <select id="countrydropdown" name="countrydropdown" [(ngModel)]="userdata.country" class="supervisorDropdown w-1/3">
+                        <option *ngFor="let country of countries" [value]="country">{{ country.name.common }}</option>
+                    </select>
+                </div>
+                <h4 class="text-blue-600 font-bold">EDUCATION</h4>
+                <div *ngIf="userType$ === 'Supervisee'" class="flex gap-52 text-lg">
+                    <label for="school">School of Attendance</label>
+                    <label for="year">Expected Year of Graduation</label>
+                </div>
+                <div *ngIf="userType$ === 'Supervisee'"  class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="school" class="inputborder p-2" [value]="userdata.school" [(ngModel)]="userdata.school">
+                    <input type="text" id="year" class="inputborder p-2" [value]="userdata.graduationYear" [(ngModel)]="userdata.graduationYear">
+                </div>
+                <h4 class="text-blue-600 font-bold">CAREER</h4>
+                <div class="flex gap-60 text-lg">
+                    <label for="employer">Current Employer</label>
+                    <label for="linkedin">LinkedIn Profile URL</label>
+                </div>
+                <div class="flex gap-20 pt-2 pb-5">
+                    <input type="text" id="employer" class="inputborder p-2" [value]="userdata.currentEmployer" [(ngModel)]="userdata.currentEmployer">
+                    <input type="text" id="linkedin" class="inputborder p-2" [value]="userdata.linkedIn" [(ngModel)]="userdata.linkedIn">
+                </div>
+                <button class="bg-blue-600 text-white font-bold w-52 h-12 p-2 text-lg hover:bg-blue-400">UPDATE MY PROFILE</button>
+            </form>
+            <br><br>
+        </div>
+    </div>

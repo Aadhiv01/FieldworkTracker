@@ -1,0 +1,70 @@
+.active-link {
+    background-color: white;
+    color: rgb(37, 99, 235);
+    letter-spacing: 1px;
+    border: 2.8px solid rgb(37, 99, 235);
+    height: 6.4vmin;
+    cursor: auto;
+}
+
+.inactive-link {
+    background-color: rgb(37, 99, 235);
+    color: white;
+    height: 6.4vmin;
+}
+
+.inactive-link:hover {
+    background-color: rgb(80, 134, 250);
+}
+
+.inputborder {
+    border: 0.8px solid grey;
+    width: 36.6vb;
+    height: 5.4vh;
+    border-radius: 6px;
+    font-size: medium;
+    padding: 1vmin;
+}
+
+.inputborderorg {
+    border: 0.8px solid grey;
+    width: 80vb;
+    height: 5.4vh;
+    border-radius: 6px;
+    font-size: medium;
+    padding: 1vmin;
+}
+
+.supervisorDropdown {
+    border: 0.8px solid grey;
+    border-radius: 6px;
+    height: 5.4vh;
+    width: 40vb;
+    font-size: medium;
+    padding: 2;
+}
+
+.inputborder:active, .supervisorDropdown:active {
+    box-shadow: 0 0 0.4em grey;
+}
+
+.table-list {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-list th, .table-list td {
+  padding: 8px;
+  text-align: left;
+}
+
+.table-list thead th {
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #000;
+  font-size: medium;
+}
+
+.table-list tbody td {
+  border-top: none;
+  font-size: 1.8vmin;
+}

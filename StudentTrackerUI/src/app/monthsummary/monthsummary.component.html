@@ -1,0 +1,237 @@
+<div>
+  <nav class="no-print bg-blue-600 text-white flex p-2 items-center">
+    <h5 class="font-extrabold uppercase flex-grow pl-2" >{{ dateVal.toLocaleDateString('en-US', { month: 'long' }) }} {{ dateVal.getFullYear() }} ({{ selectedOrganization }})</h5>
+    <p class="cursor-pointer text-lg pr-2" (click)="urlRedirect('/dashboard')">Back to Dashboard</p>
+  </nav>
+  <div class="no-print pt-12 pl-8 pr-8 flex justify-center gap-20">
+    <div class="text-center">
+      <h5 class="text-blue-600 font-bold uppercase">total hours</h5>
+      <p class="text-base font-medium">{{ totalHoursSum }}</p>
+    </div>
+    <div class="text-center">
+      <h5 class="text-blue-600 font-bold uppercase">independent hours</h5>
+      <p class="text-base font-medium">{{ totalSum('independent') }}</p>
+    </div>
+    <div class="text-center">
+      <h5 class="text-blue-600 font-bold uppercase">supervised hours</h5>
+      <p class="text-base font-medium">{{ totalSum('supervised') }}</p>
+    </div>
+    <div class="text-center">
+      <h5 class="text-blue-600 font-bold uppercase">percent of hours supervised</h5>
+      <p class="text-base font-medium">{{ totalSum('supervised') / totalHoursSum * 100 | number: '1.2-2' }}%</p>
+    </div>
+  </div>
+  <div class="no-print pt-10 pl-8 pr-8 flex justify-center gap-20">
+    <div class="bg-blue-50 summarywidth p-4 shadow-md">
+      <h6 class="text-blue-600 text-center font-extrabold uppercase pb-2">total hour requirements</h6>
+      <h6 class="font-bold">
+        <span *ngIf="totalHoursSum >= 20; else notSufficientIndependent" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Minimum 20 Total Hours<br>
+        </span>
+        <ng-template #notSufficientIndependent>
+          <span class="textFalse">
+            <i class="bi bi-x-circle-fill"></i>&nbsp;Minimum 20 Total Hours<br>
+            <span class="text-sm px-4"> {{ 20 - totalHoursSum }} Hour(s) Still Needed </span>
+          </span>
+        </ng-template><br><br>
+        <span *ngIf="totalHoursSum <= 130" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Maximum 130 Total Hours
+        </span><br><br>
+      </h6>
+    </div>
+    <div class="bg-blue-50 summarywidth p-4 shadow-md">
+      <h6 class="text-blue-600 text-center font-extrabold uppercase pb-2">supervision requirements</h6>
+      <h6 class="font-bold">
+        <span *ngIf="totalHoursSum >= .05*totalHoursSum; else notSufficientSupervised" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Minimum 5% Supervision
+        </span>
+        <ng-template #notSufficientSupervised>
+          <span class="textFalse">
+            <i class="bi bi-x-circle-fill"></i>&nbsp;Minimum 5% Supervision<br>
+            <span class="text-sm px-4"> {{ .05*totalHoursSum - totalSum('supervised') }} Hour(s) Still Needed </span>
+          </span>
+        </ng-template><br><br>
+        <span *ngIf="totalSum('groupsupervised') <= 0.5*totalSum('supervised'); else notSufficientGroupSupervised" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Maximum 50% Group Supervision
+        </span>
+        <ng-template #notSufficientGroupSupervised>
+          <span class="textFalse">
+            <i class="bi bi-x-circle-fill"></i>&nbsp;Maximum 50% Group Supervision<br>
+            <span class="text-sm px-4">Current Group Supervision Total: {{ totalSum('groupsupervised')* 100 / totalSum('supervised') }}%</span>
+          </span>
+        </ng-template><br><br>
+      </h6>
+    </div>
+    <div class="bg-blue-50 summarywidth p-4 shadow-md">
+      <h6 class="text-blue-600 text-center font-extrabold uppercase pb-2">contacts requirements</h6>
+      <h6 class="font-bold">
+        <span *ngIf="hoursData.supervised.length >= 4; else notSufficientContacts" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Minimum 4 Total Contacts
+        </span>
+        <ng-template #notSufficientContacts>
+          <span class="textFalse">
+            <i class="bi bi-x-circle-fill"></i>&nbsp;Minimum 4 Total Contacts<br>
+            <span class="text-sm px-4">{{ 4 - hoursData.supervised.length }} Contact(s) Still Needed</span>
+          </span>
+        </ng-template><br><br>
+        <span *ngIf="checkObservations; else notSufficientObservation" class="textTrue">
+          <i class="bi bi-check-circle-fill"></i>&nbsp;Minimum 1 Observation with Client
+        </span>
+        <ng-template #notSufficientObservation>
+          <span class="textFalse">
+            <i class="bi bi-x-circle-fill"></i>&nbsp;Minimum 1 Observation with Client<br>
+            <span class="text-sm px-4">1 Observation with Client Still Needed</span>
+          </span>
+        </ng-template>
+      </h6>
+    </div>
+  </div>
+  <br><br>
+  <div *ngIf="completeHoursData && completeHoursData.length > 0 && selectedOrganization && selectedSupervisor" class="pl-14 pr-14 flex flex-col items-center gap-20">
+    <table *ngIf="completeHoursData" class="table-list tableWidth table1 border-collapse border border-gray-800">
+      <thead>
+        <tr>
+          <th colspan="4" class="border border-gray-800 p-2 text-center"></th>
+          <th colspan="2" class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-teal-100">Independent</th>
+          <th colspan="2" class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-violet-200">Independent Supervised</th>
+          <th class="border border-gray-800 p-2 text-center bg-violet-200"></th>
+          <th colspan="4" class="border border-gray-800 p-2 text-center"></th>
+        </tr>
+        <tr>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Date</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Start Time</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">End Time</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Supervisor</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-teal-100">Restricted</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-teal-100">Unrestricted</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-violet-200">Restricted</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-violet-200">Unrestricted</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold bg-violet-200">Group</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Contact Type</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Supervision Format</th>
+          <th colspan="2" class="border border-gray-800 py-2 text-center"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let hour of completeHoursData">
+          <tr>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.date | date:'MMMM d, yyyy' }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ getTime(hour.startTime) | date:'h:mm a' }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ getTime(hour.endTime) | date:'h:mm a' }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.supervisor.split(' ')[0][0] }}. {{ hour.supervisor.split(' ')[1].slice(0, 3) }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.restricted ?? 0 }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.unrestricted ?? 0 }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.individualRestricted ?? 0 }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.individualUnrestricted ?? 0 }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.groupUnrestricted ?? 0 }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ hour.contactType == "Non-Observational" ? "Contact" : hour.contactType }}</td>
+            <td class="border border-gray-800 p-2 text-base text-center capitalize font-medium">{{ hour.formatType }}</td>
+            <td *ngIf="dateVal.getFullYear() == currentYear" class="border border-gray-800 p-2 text-center"><i class="bi bi-pencil text-blue-600 text-2xl font-extrabold cursor-pointer"></i></td>
+            <td *ngIf="dateVal.getFullYear() == currentYear" class="border border-gray-800 p-2 text-center"><i class="bi bi-trash text-blue-600 text-2xl font-extrabold cursor-pointer"></i></td>
+          </tr>
+          <tr>
+            <td colspan="13" class="bg-gray-100 text-base font-medium p-2">{{ hour.description }}</td>
+          </tr>
+        </ng-container>
+        <tr class="summaries bg-blue-600 text-white font-bold">
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">Total</td>
+          <td colspan="3"></td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">{{ restrictedSum() | number:'1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">{{ unrestrictedSum() | number:'1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">{{ individualRestrictedSum() | number:'1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">{{ individualUnrestrictedSum() | number:'1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">{{ groupUnrestrictedSum() | number:'1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">Contacts: {{ contactCount() }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-extrabold">Observations: {{ observationCount() }}</td>
+          <td colspan="2"></td>
+        </tr>
+      </tbody>
+    </table>
+    <table *ngIf="completeHoursData" class="table-list tableWidth table2 border-collapse border border-gray-800">
+      <thead>
+        <tr>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Supervisee</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Month</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Setting</th>
+          <th class="border border-gray-800 p-2  text-lg text-center font-extrabold">Fieldwork Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ userName }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ dateVal.toLocaleDateString('en-US', { month: 'long' }) }} {{ dateVal.getFullYear() }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ selectedOrganization }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">Supervised Fieldwork</td>
+        </tr>
+      </tbody>
+    </table>
+    <table *ngIf="completeHoursData" class="table-list tableWidth table3 border-collapse border border-gray-800">
+      <thead>
+        <tr>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Supervisor(s)</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Email</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">BACB Account ID</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Qualification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ selectedSupervisor.firstName + " " + selectedSupervisor.lastName }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ selectedSupervisor.email }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ selectedSupervisor.bacbid }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ selectedSupervisor.qualification }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <table *ngIf="completeHoursData" class="table-list tableWidth table4 border-collapse border border-gray-800">
+      <thead>
+        <tr>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Total Hours</th>
+          <th class="border border-gray-800 bg-teal-100 p-2 text-lg text-center font-extrabold">Independent Hours</th>
+          <th class="border border-gray-800 bg-violet-200 p-2 text-lg text-center font-extrabold">Supervised Hours</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Supervision %</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Contacts</th>
+          <th class="border border-gray-800 p-2 text-lg text-center font-extrabold">Observations with Client</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ totalHoursSum | number: '1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ restrictedSum() + unrestrictedSum() | number: '1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ individualRestrictedSum() + individualUnrestrictedSum() + groupUnrestrictedSum() | number: '1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ totalSum('supervised') / totalHoursSum * 100 | number: '1.3-3' }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ contactCount() }}</td>
+          <td class="border border-gray-800 p-2 text-base text-center font-medium">{{ observationCount() }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <br><br><br>
+  <div class="no-print flex gap-6 justify-evenly">
+    <button class="bg-blue-600 hover:bg-blue-400 text-white text-base font-extrabold buttonWidth p-2 uppercase" (click)="printPage()">print report</button>
+    <button *ngIf="dateVal.getFullYear() == currentYear" class="bg-blue-600 hover:bg-blue-400 text-white text-base font-extrabold buttonWidth p-2 uppercase">edit month details</button>
+    <button *ngIf="dateVal.getFullYear() != currentYear" class="bg-blue-600 hover:bg-blue-400 text-white text-base font-extrabold buttonWidth p-2 uppercase" (click)="urlRedirect('dashboard/bulk-hours')">edit month</button>
+    <button *ngIf="dateVal.getFullYear() != currentYear" class="bg-blue-600 hover:bg-blue-400 text-white text-base font-extrabold buttonWidth p-2 uppercase" (click)="deleteMonth()">delete month</button>
+    <button class="bg-blue-600 hover:bg-blue-400 text-white text-base font-extrabold buttonWidth p-2 uppercase" (click)="urlRedirect('/my-profile/supervisor')">manage supervisors</button>
+  </div>
+  <br><br><br><br><br>
+  <div class="no-print pl-14 pr-14">
+    <h4 class="text-blue-600 font-extrabold uppercase">GENERATE MONTHLY VERIFICATION FORM</h4><br>
+    <p class="text-base font-medium">
+      Send to Supervisor<br><br>
+      {{ selectedSupervisor.firstName + " " + selectedSupervisor.lastName }}<br><br>
+      By signing below, you hereby attest that:
+    </p>
+    <br>
+    <ul class="text-base font-medium list-disc">
+      <li>The information contained on this form is true and correct to the best of your knowledge;</li>
+      <li>All supervisors, including the responsible supervisor, met BACB supervision requirements during this month;</li>
+      <li>The required number of supervisory contacts occurred during this month;</li>
+      <li>Observation of the trainee with a client occurred during this supervisory period with a frequency appropriate for this fieldwork type;</li>
+      <li>The trainee was supervised for the required amount of time for this supervisory period;</li>
+      <li>You have read and understand the most recent version of the <span class="font-extrabold">Fieldwork Requirements </span> <span class="text-blue-500">(<span><a class="no-underline" href="https://www.bacb.com/bcba/" target="_blank">BCBA</a></span>/<span><a class="no-underline" href="https://www.bacb.com/bcaba/" target="_blank">BCaBA</a></span></span>)</li>
+      <li>We are only including appropriate behavior-analytic activities in our totals listed above; and</li>
+      <li>The fieldwork hours obtained during this supervisory period are otherwise compliant with the <span class="font-extrabold">Fieldwork Requirements </span> <span class="text-blue-500">(<span><a class="no-underline" href="https://www.bacb.com/bcba/" target="_blank">BCBA</a></span>/<span><a class="no-underline" href="https://www.bacb.com/bcaba/" target="_blank">BCaBA</a></span>)</span></li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.grayborder {
+  border: 0.8px solid grey;
+  border-radius: 6px;
+  height: 4.6vmin;
+}
+
+.grayborder:hover {
+  box-shadow: 0px 0px 3.2px grey;
+}
+
+.button-active {
+  background-color: rgb(10, 100, 238);
+  color: white;
+  border-radius: 10px;
+  height: 5.4vh;
+}
+
+.button-inactive {
+  background-color: none;
+  color: rgb(10, 100, 238);
+  border: 2px solid rgb(10, 100, 238);
+  border-radius: 10px;
+  height: 5.4vh;
+}
+
+.button-inactive:hover {
+  background-color: rgb(10, 100, 238);
+  color: white;
+}

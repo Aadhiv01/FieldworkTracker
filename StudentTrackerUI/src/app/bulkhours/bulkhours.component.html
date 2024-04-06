@@ -1,0 +1,88 @@
+<div>
+  <nav class="bg-blue-600 text-white flex p-2 items-center">
+    <h5 class="font-bold flex-grow pl-2">BULK HOURS</h5>
+    <p class="cursor-pointer text-lg pr-2" (click)="urlRedirect('/dashboard')">Back to Dashboard</p>
+  </nav>
+  <br>
+  <div class="w-2/3 pl-8 pt-4 font-medium">
+    <p class="text-base pl-8">If you have previously accrued fieldwork hours and would like to transfer hours from a different tracking<br> system, use the form below to submit previously completed hours. This will allow you to view your progress<br> towards hour completion.</p>
+    <br>
+    <form (ngSubmit)="saveHours(hoursform)" #hoursform="ngForm">
+      <div class="pt-4 pl-8 pr-8 flex gap-28">
+        <label for="supervisordropdown" class="text-base pb-2 pr-12">Responsible Supervisor<span class="required text-red-700 text-sm align-super">*</span></label><br>
+        <label for="organizationdropdown" class="text-base pb-2">Organization<span class="required text-red-700 text-sm align-super">*</span></label><br>
+      </div>
+      <div class="pt-2 pl-8 grid grid-cols-2 gap-3">
+        <select id="supervisordropdown" name="supervisordropdown" [(ngModel)]="selectedSupervisor" class="grayborder">
+          <option value="+ Add New Supervisor" class="p-2" selected>+ Add New Supervisor</option>
+          <option *ngFor="let supervisor of supervisors" class="p-2" [ngValue]="supervisor">{{ supervisor.firstName + " " + supervisor.lastName }}</option>
+        </select>
+        <select id="organizationdropdown" name="organizationdropdown" [(ngModel)]="selectedOrganization" class="grayborder">
+          <option value="+ Add New Organization" class="p-2" selected>+ Add New Organization</option>
+          <option *ngFor="let organization of organizations" class="p-2" [ngValue]="organization">{{ organization.name }}</option>
+        </select>
+        <button [style.visibility]="selectedSupervisor === '+ Add New Supervisor' ? 'visible' : 'hidden'" class="bg-blue-600 hover:bg-blue-400 text-white font-bold buttonWidth p-2" (click)="buttonRedirect('/my-profile/supervisor')">ADD NEW SUPERVISOR</button>
+        <button [style.visibility]="selectedOrganization === '+ Add New Organization' ? 'visible' : 'hidden'" class="bg-blue-600 hover:bg-blue-400 text-white font-bold buttonWidth p-2" (click)="buttonRedirect('//my-profile/organization')">ADD NEW ORGANIZATION</button>
+      </div>
+      <div *ngIf="selectedSupervisor && selectedSupervisor !== '+ Add New Supervisor' && selectedOrganization && selectedOrganization !== '+ Add New Organization'">
+        <div>
+          <div class="pl-8 flex gap-48">
+            <label for="month" class="text-base pb-2 pr-4">Month<span class="required text-red-700 text-sm align-super">*</span></label><br>
+            <label for="year" class="text-base pb-2">Year<span class="required text-red-700 text-sm align-super">*</span></label><br>
+          </div>
+          <div class="pt-2 pl-8 pb-4 grid grid-cols-2 gap-3">
+            <select id="month" name="month" [(ngModel)]="selectedMonth" class="grayborder">
+              <option value="Please Select" class="p-2" selected disabled>Please Select</option>
+              <option *ngFor="let month of months" [value]="month">{{ month }}</option>
+            </select>
+            <select id="year" name="year" [(ngModel)]="selectedYear" class="grayborder">
+              <option value="Please Select" class="p-2" selected disabled>Please Select</option>
+              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+          <label for="fieldworkType" class="text-base pb-2 pl-8">Fieldwork Type<span class="required text-red-700 text-sm align-super">*</span></label><br>
+          <div class="flex gap-12 pl-8">
+            <button type="button" name="fieldworkType" class="font-bold text-base w-1/2" [ngClass]="buttonSelect === 'Supervised' ? 'button-active' : 'button-inactive'" (click)="buttonSelect = 'Supervised'">Supervised Fieldwork</button>
+            <button type="button" name="fieldworkType" class="font-bold text-base w-1/2" [ngClass]="buttonSelect === 'Concentrated' ? 'button-active' : 'button-inactive'" (click)="buttonSelect = 'Concentrated'">Concentrated Supervised Fieldwork</button>
+          </div>
+        </div>
+        <br>
+        <div class="pl-8 pt-4">
+          <h5 class="font-bold text-blue-600 pb-2">Hours</h5>
+          <h6 class="font-bold text-blue-600">Independent Hours <span class="text-blue-600 font-normal">(BCBA <i>not</i> Present)</span> </h6>
+          <div class="pt-2 pb-4 grid grid-cols-2 gap-3">
+            <label for="restricted" class="text-base pb-2">Restricted<span class="required text-red-700 text-sm align-super">*</span></label>
+            <label for="unrestricted" class="text-base pb-2">Unrestricted<span class="required text-red-700 text-sm align-super">*</span></label>
+            <input type="number" id="restricted" name="restricted" class="grayborder p-1" [(ngModel)]="restrictedHours" inputmode="numeric" required />
+            <input type="number" id="unrestricted" name="unrestricted" class="grayborder p-1" [(ngModel)]="unrestrictedHours" inputmode="numeric" required />
+          </div>
+          <h6 class="font-bold text-blue-600">Supervised Hours <span class="text-blue-600 font-normal">(BCBA <i>is</i> Present)</span> </h6>
+          <div class="pt-2 pb-4 grid grid-cols-3 gap-3">
+            <label for="restricted" class="text-base">Individual Restricted<span class="required text-red-700 text-sm align-super">*</span></label>
+            <label for="unrestricted" class="text-base">Individual Unrestricted<span class="required text-red-700 text-sm align-super">*</span></label>
+            <label for="gr-unrestricted" class="text-base">Group Unrestricted<span class="required text-red-700 text-sm align-super">*</span></label>
+            <input type="number" id="restricted" name="restricted" class="grayborder p-1" [(ngModel)]="individualRestricted" inputmode="numeric" required />
+            <input type="number" id="unrestricted" name="unrestricted" class="grayborder p-1" [(ngModel)]="individualUnrestricted" inputmode="numeric" required />
+            <input type="number" id="gr-unrestricted" name="gr-unrestricted" class="grayborder p-1" [(ngModel)]="groupUnrestricted" inputmode="numeric" required />
+          </div>
+          <br>
+          <h6 class="font-bold text-blue-600">Contacts</h6>
+          <div class="pt-2 pb-4 grid grid-cols-2 gap-3">
+            <label for="non-observational" class="text-base">Non-Observational Contacts<span class="required text-red-700 text-sm align-super">*</span></label>
+            <label for="observation" class="text-base">Observation with Client Contacts<span class="required text-red-700 text-sm align-super">*</span></label>
+            <input type="number" id="non-observational" name="non-observational" class="grayborder p-1" [(ngModel)]="nonObservationalContacts" inputmode="numeric" required />
+            <input type="number" id="observation" name="observation" class="grayborder p-1" [(ngModel)]="observationalContacts" inputmode="numeric" required />
+          </div>
+          <br>
+          <label for="description" class="text-base pb-2">Description</label><br>
+          <textarea name="description" class="resize w-fit grayborder p-1" [(ngModel)]="description"></textarea>
+        </div>
+        <br>
+        <div class="pt-8 pl-8">
+          <button class="bg-blue-600 text-lg w-24 h-14 text-white font-semibold rounded shadow-lg focus:outline-none focus:ring focus:border-blue-400 focus:bg-blue-500 focus:opacity-100 hover:bg-blue-500 hover:text-white" [disabled]="hoursform.invalid">SAVE</button>
+        </div>
+      </div>
+    </form>
+    <br><br>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importing Bootstrap SCSS file. */
+@import "./node_modules/bootstrap/scss/bootstrap";
+
+/* Importing Datepicker SCSS file. */
+@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+
+@import '~font-awesome/css/font-awesome.min.css';
+
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+
+.table4 {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  .table1 {
+    order: 4;
+  }
+
+  .table2 {
+    order: 1;
+  }
+
+  .table3 {
+    order: 2;
+  }
+
+  .table4 {
+    display: table;
+    order: 3;
+  }
+
+  .summaries {
+    background-color: rgb(152, 185, 224);
+  }
+}

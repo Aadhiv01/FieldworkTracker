@@ -1,0 +1,99 @@
+<div class="">
+    <nav>
+        <h4 class="bg-blue-500 text-white p-3">WELCOME</h4>
+    </nav>
+    <div class="container">
+        <form #welcomeForm class="welcome-form bg-blue-100 w-1/2 text-start p-4 px-4 mx-auto" #welcomeform="ngForm">
+            <h5 class="text-blue-600 font-bold">USER INFORMATION</h5>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                  <div class="w-1/2 pr-4">
+                    <label for="fname" class="block text-lg font-semibold mb-2">First Name<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="fname" name="fname" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                  <div class="w-1/2 pl-4">
+                    <label for="lname" class="block text-lg font-semibold mb-2">Last Name<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="lname" name="lname" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                </div>
+            </div>
+            <br>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                  <div class="w-1/2 pr-4">
+                    <label for="bacbid" class="block text-lg font-semibold mb-2">BACB ID</label>
+                    <input type="text" id="bacib" name="bacbid" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                  <div class="w-1/2 pl-4">
+                    <label for="phone" class="block text-lg font-semibold mb-2">Phone<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="phone" name="phone" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                </div>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="address" class="block text-lg font-semibold mb-2">Address<span class="required text-red-700 text-sm align-super">*</span></label>
+                <input type="text" id="address" name="address" class="form-control border shadow-sm bg-white rounded" required />
+                <p class="pt-1"></p>
+                <input type="text" id="address2" class="form-control border bg-white shadow-sm rounded" />
+            </div>
+            <br>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                  <div class="w-1/2 pr-4">
+                    <label for="city" class="block text-lg font-semibold mb-2">City<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="city" name="city" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                  <div class="w-1/2 pl-4">
+                    <label for="state" class="block text-lg font-semibold mb-2">State<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="state" name="state" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                </div>
+            </div>
+            <br>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                  <div class="w-1/2 pr-4">
+                    <label for="zip" class="block text-lg font-semibold mb-2">Zip / Postal Code<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="zip" name="zip" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                  <div class="w-1/2 pl-4">
+                    <label for="country" class="block text-lg font-semibold mb-2">Country<span class="required text-red-700 text-sm align-super">*</span></label>
+                    <input type="text" id="country" name="country" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                </div>
+            </div>
+            <br>
+            <h5 class="text-blue-600 font-bold">EDUCATION</h5>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                  <div class="w-1/2 pr-4">
+                    <label for="school" class="block text-lg font-semibold mb-2">School of Attendance</label>
+                    <input type="text" id="school" name="school" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                  <div class="w-1/2 pl-4">
+                    <label for="year" class="block text-lg font-semibold mb-2">Expected Year of Graduation</label>
+                    <input type="text" id="year" name="year" class="form-control border shadow-sm bg-white rounded" required />
+                  </div>
+                </div>
+            </div>
+            <br>
+            <h5 class="text-blue-600 font-bold">CAREER</h5>
+            <div class="form-group">
+                <div class="flex flex-row items-center">
+                    <div class="w-1/2 pr-4">
+                        <label for="employer" class="block text-lg font-semibold mb-2">Current Employer</label>
+                        <input type="text" id="employer" name="employer" class="form-control border shadow-sm bg-white rounded" required />
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <label for="linkedin" class="block text-lg font-semibold mb-2">LinkedIn Profile URL</label>
+                        <input type="text" id="linkedin" name="linkedin" class="form-control border shadow-sm bg-white rounded" required />
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <button type="submit" class="mx-auto px-4 py-2 bg-blue-600 text-lg text-white font-semibold rounded shadow-lg focus:outline-none focus:ring focus:border-blue-400 focus:bg-blue-500 focus:opacity-100 hover:bg-blue-500 hover:text-white" [disabled]="welcomeform.invalid">UPDATE MY PROFILE</button>
+        </form>
+    </div>
+</div>
